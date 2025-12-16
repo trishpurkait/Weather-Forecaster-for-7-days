@@ -1,392 +1,165 @@
 # 🌤️ Deep Learning Weather Forecaster | Kolkata 7-Day Prediction System
 
-[![Python](https://img.shields.io/badge/Python-3.x-blue.svg)](https://www.python.org/)
-[![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange.svg)](https://www.tensorflow.org/)
-[![Accuracy](https://img.shields.io/badge/MAE-0.99°C-success.svg)](README.md)
+A deep learning system that predicts the daily temperature sequence for the next week using Bidirectional LSTMs and historical weather data.
 
-> An intelligent deep learning system that predicts 7-day temperature sequences for Kolkata using Bidirectional LSTMs and 5 years of historical weather data.
+## 📌 Project Overview
 
----
+This project implements an intelligent weather forecasting engine designed specifically for the tropical climate of Kolkata, India. Using advanced Recurrent Neural Networks (Bi-LSTM) and 5 years of historical data, the system analyzes 14-day weather patterns to generate a precise 7-day temperature forecast, achieving sub-1-degree accuracy.
 
-## 🎯 What Makes This Special?
+## ✨ Features
 
-Unlike traditional weather apps that only predict tomorrow's temperature, this system uses advanced neural networks to forecast an **entire week's temperature pattern simultaneously**—achieving sub-degree accuracy that rivals professional meteorological services.
+  * **7-Day Sequence Prediction:** Forecasts temperature for Day 1 to Day 7 simultaneously (not just tomorrow).
+  * **Bi-Directional Context:** Utilizes Bidirectional LSTMs to understand weather patterns from both past and future contexts.
+  * **Robust Outlier Handling:** Implements Huber Loss to maintain stability during sudden storms or heatwaves.
+  * **Seasonality Engineering:** Uses cyclical sine/cosine features to mathematically model Winter, Summer, and Monsoon cycles.
+  * **Data Cleaning Pipeline:** Removal of noisy features (Wind Speed/Chill) and missing value imputation.
+  * **Visual Feedback:** Plots "Actual vs. Predicted" temperature trends for easy verification.
 
-### Key Highlights
+## 🎯 How It Works
 
-- **🔮 Multi-Day Forecasting:** Predicts Days 1-7 in a single forward pass
-- **🧠 Bidirectional Intelligence:** Learns from both past and future weather patterns
-- **💪 Storm-Resistant:** Handles extreme weather events using Huber Loss
-- **🌡️ Sub-Degree Accuracy:** 0.99°C Mean Absolute Error on test data
-- **📊 5-Year Learning:** Trained on 1,826 days of historical Kolkata weather
+### 1\. Data Preprocessing
 
----
+  * **Source:** 5 years of daily records (2017–2022) for Kolkata.
+  * **Feature Selection:** Filters for 11 key signals (Temp, Dew Point, Pressure, etc.).
+  * **Normalization:** Scales all values to 0-1 range for efficient Neural Network training.
 
-## 📖 Table of Contents
+### 2\. Sequence Creation
 
-- [How It Works](#-how-it-works)
-- [Technical Architecture](#-technical-architecture)
-- [Installation](#-installation--setup)
-- [Usage Guide](#-usage-guide)
-- [Model Performance](#-model-performance)
-- [Configuration](#%EF%B8%8F-configuration-parameters)
-- [Use Cases](#-real-world-applications)
-- [Roadmap](#-future-roadmap)
-- [Contributing](#-contributing)
-- [Contact](#-contact)
+  * **Input Window:** Captures the past **14 days** of weather history.
+  * **Target Window:** Aligns data to predict the subsequent **7 days**.
+  * **Sliding Window:** Moves one day at a time to create thousands of training examples.
 
----
+### 3\. Deep Learning Model (Pro Model)
 
-## 🔬 How It Works
+  * **Architecture:** Bidirectional LSTM (64 units) → Dropout (0.3) → LSTM (32 units).
+  * **Learning:** Trains on historical sequences to minimize Huber Loss.
+  * **Optimization:** Uses the Adam optimizer with adaptive learning rate reduction (`ReduceLROnPlateau`).
 
-### The Pipeline
+### 4\. Visual Output
 
-```
-Historical Data (2017-2022) → Feature Engineering → Sequence Generation
-                                      ↓
-              Bi-LSTM Neural Network → 7-Day Forecast → Validation
-```
+  * **Console:** Prints the 7-day temperature forecast array (in °C).
+  * **Graph:** Generates a line chart comparing the predicted trend against actual historical values for validation.
 
-### Step-by-Step Process
+## 🛠️ Technical Specifications
 
-**1. Data Acquisition & Cleaning**
-- 5 years of daily weather records for Kolkata
-- 11 critical features: Temperature, Dew Point, Humidity, Pressure etc.
-- Automatic removal of noisy/empty columns (Wind Chill)
-- Missing value imputation using forward-fill strategy
+  * **Model:** Bidirectional LSTM (TensorFlow/Keras)
+  * **Input Horizon:** 14 Days
+  * **Forecast Horizon:** 7 Days
+  * **Accuracy:** 0.99°C Mean Absolute Error (MAE)
+  * **Loss Function:** Huber Loss (delta=1.0)
+  * **Training Time:** \~20-30 Epochs (with Early Stopping)
 
-**2. Feature Engineering**
-- **Cyclical Encoding:** Converts day-of-year into sine/cosine features to capture seasonal patterns
-- **Normalization:** Min-Max scaling to [0,1] range for optimal neural network training
-- **Sequence Construction:** Sliding 14-day windows to create training examples
+## 📦 Dependencies
 
-**3. Deep Learning Architecture**
-```
-Input (14 days × 11 features)
-        ↓
-Bidirectional LSTM (64 units) — Learns temporal patterns in both directions
-        ↓
-Dropout Layer (0.3) — Prevents overfitting
-        ↓
-LSTM Layer (32 units) — Refines predictions
-        ↓
-Dense Output (7 predictions) — One per forecast day
+```bash
+pip install tensorflow pandas numpy scikit-learn matplotlib
 ```
 
-**4. Training Strategy**
-- **Loss Function:** Huber Loss (robust to outliers)
-- **Optimizer:** Adam with learning rate scheduling
-- **Validation:** 80/20 train-test split with early stopping
-- **Callbacks:** ReduceLROnPlateau, ModelCheckpoint, EarlyStopping
+**Required Libraries:**
 
----
+  * Python 3.x
+  * TensorFlow 2.x
+  * Pandas & NumPy
+  * Scikit-Learn
+  * Matplotlib
 
-## 🏗️ Technical Architecture
+## 🚀 Installation & Usage
 
-### Model Specifications
+### 1\. Clone the Repository
 
-| Component | Configuration |
-|-----------|--------------|
-| **Model Type** | Bidirectional LSTM (Recurrent Neural Network) |
-| **Input Shape** | (14 days, 11 features) |
-| **Output Shape** | (7 temperature predictions) |
-| **Total Parameters** | ~26,000 trainable weights |
-| **Loss Function** | Huber Loss (δ=1.0) |
-| **Optimizer** | Adam (lr=0.001) |
-| **Training Data** | 1,826 days (2017-2022) |
-| **Test Data** | 365 days |
-
-### Performance Metrics
-
-```python
-Mean Absolute Error (MAE):     0.99°C
-Root Mean Squared Error:       1.24°C
-Maximum Error (Pro Model):     5.58°C
-R² Score:                      0.96
-```
-
----
-
-## 🚀 Installation & Setup
-
-### Prerequisites
-
-- Python 3.7 or higher
-- pip package manager
-- 4GB RAM minimum (8GB recommended)
-
-### Quick Start
-
-**1. Clone the Repository**
 ```bash
 git clone https://github.com/trishpurkait/weather-forecaster-kolkata.git
 cd weather-forecaster-kolkata
 ```
 
-**2. Create Virtual Environment (Recommended)**
-```bash
-python -m venv weather_env
-source weather_env/bin/activate  # On Windows: weather_env\Scripts\activate
-```
+### 2\. Install Dependencies
 
-**3. Install Dependencies**
 ```bash
 pip install tensorflow pandas numpy scikit-learn matplotlib
 ```
 
-Or use the requirements file:
-```bash
-pip install -r requirements.txt
-```
+### 3\. Run the Training Notebook
 
-**Dependencies:**
-- `tensorflow>=2.8.0` - Deep learning framework
-- `pandas>=1.3.0` - Data manipulation
-- `numpy>=1.21.0` - Numerical computing
-- `scikit-learn>=1.0.0` - Data preprocessing
-- `matplotlib>=3.5.0` - Visualization
+Open and run `deep-learning-weather-forecaster-kolkata(1).ipynb` to train the model from scratch.
 
----
+### 4\. Make a Prediction
 
-## 💻 Usage Guide
-
-### Training the Model
-
-Open and execute the Jupyter notebook:
-
-```bash
-jupyter notebook deep-learning-weather-forecaster-kolkata(1).ipynb
-```
-
-The notebook will:
-1. Load and preprocess historical data
-2. Train the Bi-LSTM model (20-30 epochs)
-3. Save the best model as `best_weather_pro.keras`
-4. Generate performance visualizations
-
-### Making Predictions
+Use the saved model to forecast weather for new data:
 
 ```python
-import numpy as np
-import pandas as pd
 from tensorflow.keras.models import load_model
-from sklearn.preprocessing import MinMaxScaler
 
 # Load the trained model
 model = load_model('best_weather_pro.keras')
 
-# Prepare your input (last 14 days of weather)
-# Shape must be: (1, 14, 11)
-recent_data = prepare_input_sequence(last_14_days)
-
-# Generate 7-day forecast
-forecast = model.predict(recent_data)
-
-# Inverse transform to get actual temperatures
-predicted_temps = scaler.inverse_transform(forecast)
-
-print("📅 7-Day Temperature Forecast:")
-for day, temp in enumerate(predicted_temps[0], 1):
-    print(f"Day {day}: {temp:.1f}°C")
+# Predict next 7 days (input must be shape [1, 14, 11])
+prediction = model.predict(recent_weather_data)
+print("7-Day Forecast:", scaler.inverse_transform(prediction))
 ```
 
-### Example Output
+## 📊 System Output
 
-```
-📅 7-Day Temperature Forecast:
-Day 1: 28.3°C
-Day 2: 29.1°C
-Day 3: 30.2°C
-Day 4: 29.8°C
-Day 5: 28.5°C
-Day 6: 27.9°C
-Day 7: 28.4°C
-```
+**Console Output:**
 
----
-
-## 📊 Model Performance
-
-### Accuracy Comparison
-
-| Metric | Standard LSTM | **Bi-LSTM (Pro)** |
-|--------|--------------|------------------|
-| Mean Absolute Error | 1.14°C | **0.99°C** ✅ |
-| Max Error | 5.78°C | **5.58°C** ✅ |
-| Training Time | 18 epochs | 22 epochs |
-
-### Visualizations
-
-The system generates three key plots:
-
-1. **Training History:** Loss curves showing model convergence
-2. **Forecast vs Actual:** 7-day prediction overlay on ground truth
-3. **Error Distribution:** Histogram showing prediction accuracy spread
-
-### Sample Forecast Graph
-
-```
-Temperature (°C)
-32°│                    ╱╲
-30°│        ╱╲        ╱  ╲     
-28°│      ╱  ╲      ╱    ╲    
-26°│    ╱    ╲    ╱      ╲   
-24°│  ╱      ╲  ╱        ╲  
-22°│╱        ╲╱          ╲
-   └─────────────────────────
-    Day 1  2  3  4  5  6  7
-    ──── Predicted  ──── Actual
+```text
+Training Days: 1826
+Testing Days: 365
+Final Accuracy: +/- 0.99 °C
+Standard Model Max Error: 5.78 °C
+Pro Model Max Error:      5.58 °C
 ```
 
----
+**Visual Output:**
+
+  * **Loss Plot:** Training vs. Validation loss curves.
+  * **Forecast Plot:** A graph showing the predicted 7-day temperature curve overlaying the actual ground truth.
+  * **Error Histogram:** A bell curve showing most errors are centered around 0°C.
 
 ## ⚙️ Configuration Parameters
 
-Modify these in the notebook to experiment:
-
-```python
-# Model Hyperparameters
-LOOKBACK_WINDOW = 14      # Days of history to consider
-FORECAST_HORIZON = 7      # Days to predict ahead
-BATCH_SIZE = 32           # Training batch size
-DROPOUT_RATE = 0.3        # Regularization strength
-MAX_EPOCHS = 100          # Training iterations
-PATIENCE = 10             # Early stopping threshold
-
-# Architecture
-LSTM_UNITS_1 = 64         # First Bi-LSTM layer
-LSTM_UNITS_2 = 32         # Second LSTM layer
-LEARNING_RATE = 0.001     # Initial learning rate
-```
-
-### Tuning Tips
-
-- **Increase `LOOKBACK_WINDOW`** (e.g., 21 days) for better seasonal pattern capture
-- **Reduce `DROPOUT_RATE`** (e.g., 0.2) if model is underfitting
-- **Add more LSTM layers** for complex pattern recognition (at cost of speed)
-
----
-
-## 🌍 Real-World Applications
-
-### Event Planning
-Plan outdoor events with confidence knowing week-ahead temperature trends.
-
-### Agriculture
-Optimize irrigation schedules and crop protection based on temperature forecasts.
-
-### Supply Chain Management
-Anticipate demand spikes for temperature-sensitive products (ice cream, beverages, HVAC).
-
-### Personal Decision Making
-- Schedule outdoor activities during optimal weather windows
-- Plan weekly wardrobes efficiently
-- Time vehicle maintenance around weather patterns
-
-### Research & Education
-- Benchmark for comparing weather prediction algorithms
-- Teaching material for time series forecasting
-- Foundation for climate pattern analysis
-
----
+| Parameter | Default Value | Description |
+| :--- | :--- | :--- |
+| `LOOKBACK_WINDOW` | 14 | Days of history input to the model |
+| `FORECAST_HORIZON` | 7 | Days of future prediction output |
+| `BATCH_SIZE` | 32 | Samples processed per training step |
+| `DROPOUT` | 0.3 | Regularization rate to prevent overfitting |
+| `EPOCHS` | 100 | Maximum training iterations |
 
 ## 🔧 Troubleshooting
 
-**Problem: High prediction error (>2°C)**
+**Issue: Model accuracy is low (\> 2°C error)**
 
-✅ **Solutions:**
-- Verify input data is scaled to [0,1]
-- Check that cyclical features (`Day_sin`, `Day_cos`) are present
-- Ensure no missing values in the last 14 days
+  * Ensure input data is correctly scaled (0-1).
+  * Check if `Day_sin` and `Day_cos` columns were created correctly for seasonality.
 
-**Problem: Flat/constant predictions**
+**Issue: Predictions are flat/constant**
 
-✅ **Solutions:**
-- Model is underfitting—increase LSTM units to 128/64
-- Train for more epochs (remove early stopping)
-- Check data variance (model may have learned mean prediction)
+  * The model might be "underfitting." Increase the LSTM units or train for more epochs.
+  * Verify that `Wind Chill` (empty column) was removed.
 
-**Problem: Training is slow**
+## 🎯 Use Cases
 
-✅ **Solutions:**
-- Reduce batch size to 16
-- Use GPU acceleration (CUDA-enabled TensorFlow)
-- Consider using a pre-trained model
+  * **Event Planning:** Selecting optimal dates for outdoor weddings or sports.
+  * **Agriculture:** Planning irrigation schedules based on heat forecasts.
+  * **Supply Chain:** Anticipating demand for beverages or AC units.
+  * **Personal Use:** Planning travel or commute for the upcoming week.
 
----
+## 🚀 Future Enhancements
 
-## 🚀 Future Roadmap
-
-### Planned Features
-
-- [ ] **Multi-City Support** - Expand to Delhi, Mumbai, Bangalore
-- [ ] **Precipitation Prediction** - Add rain/no-rain classification
-- [ ] **Web Dashboard** - Interactive Streamlit app with live forecasts
-- [ ] **Ensemble Methods** - Combine multiple models for improved accuracy
-- [ ] **Transformer Architecture** - Experiment with Temporal Fusion Transformers
-- [ ] **API Endpoint** - RESTful API for third-party integration
-- [ ] **Mobile App** - Cross-platform weather forecast application
-
-### Research Extensions
-
-- Attention mechanisms for interpretability
-- Incorporating satellite imagery data
-- Climate change impact analysis over decades
-
----
-
-## 🤝 Contributing
-
-Contributions are welcome! Here's how you can help:
-
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/AmazingFeature`)
-3. **Commit** changes (`git commit -m 'Add AmazingFeature'`)
-4. **Push** to branch (`git push origin feature/AmazingFeature`)
-5. **Open** a Pull Request
-
-### Areas for Contribution
-
-- Model architecture improvements
-- Additional feature engineering
-- Documentation enhancements
-- Bug fixes and optimizations
-- Test coverage expansion
-
----
+  * [ ] **Ensemble Learning:** Combine predictions from 3 models to reduce error further.
+  * [ ] **Web App Integration:** Deploy using Streamlit for a live dashboard.
+  * [ ] **Rainfall Classification:** Add a separate model to predict "Rain / No Rain."
+  * [ ] **Transformer Integration:** Experiment with Temporal Fusion Transformers (TFT).
 
 ## 📧 Contact
 
 **Trish Purkait**
 
-- 🐙 GitHub: [@trishpurkait](https://github.com/trishpurkait)
-- 📧 Email: trishpurkait@gmail.com
-- 💼 LinkedIn: [Connect with me](https://linkedin.com/in/trishpurkait)
-
-**Project Link:** [https://github.com/trishpurkait/weather-forecaster-kolkata](https://github.com/trishpurkait/weather-forecaster-kolkata)
-
----
+  * GitHub: [@trishpurkait](https://www.google.com/search?q=https://github.com/trishpurkait)
+  * Email: trishpurkait@gmail.com
 
 ## 🙏 Acknowledgments
 
-- **Visual Crossing Weather API** - Historical weather data source
-- **TensorFlow Team** - Deep learning framework
-- **Keras Community** - High-level neural network API
-- **Kaggle Community** - Inspiration and learning resources
-- **Open Source Contributors** - Libraries and tools that made this possible
-
----
-
-## ⭐ Star This Repository
-
-If you found this project helpful, please consider giving it a ⭐️ on GitHub!
-
----
-
-<div align="center">
-
-**Built with ❤️ by Trish Purkait**
-
-*Making weather prediction accessible through deep learning*
-
-</div>
+  * Visual Crossing Weather API (Data Source)
+  * TensorFlow/Keras Community
+  * Open Source Contributors
