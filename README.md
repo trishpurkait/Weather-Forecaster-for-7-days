@@ -12,7 +12,7 @@ This project implements an intelligent weather forecasting engine designed speci
   * **Bi-Directional Context:** Utilizes Bidirectional LSTMs to understand weather patterns from both past and future contexts.
   * **Robust Outlier Handling:** Implements Huber Loss to maintain stability during sudden storms or heatwaves.
   * **Seasonality Engineering:** Uses cyclical sine/cosine features to mathematically model Winter, Summer, and Monsoon cycles.
-  * **Data Cleaning Pipeline:** Automatic removal of noisy features (Wind Speed/Chill) and missing value imputation.
+  * **Data Cleaning Pipeline:** Removal of noisy features (Wind Speed/Chill) and missing value imputation.
   * **Visual Feedback:** Plots "Actual vs. Predicted" temperature trends for easy verification.
 
 ## 🎯 How It Works
@@ -20,7 +20,7 @@ This project implements an intelligent weather forecasting engine designed speci
 ### 1\. Data Preprocessing
 
   * **Source:** 5 years of daily records (2017–2022) for Kolkata.
-  * **Feature Selection:** Filters for 11 key signals (Temp, Dew Point, Pressure, etc.).
+  * **Feature Selection:** Filters for 11 key signals (Temperature, Dew Point, Pressure, etc.).
   * **Normalization:** Scales all values to 0-1 range for efficient Neural Network training.
 
 ### 2\. Sequence Creation
