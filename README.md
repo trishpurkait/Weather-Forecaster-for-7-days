@@ -51,7 +51,7 @@ Historical Data (2017-2022) → Feature Engineering → Sequence Generation
 
 **1. Data Acquisition & Cleaning**
 - 5 years of daily weather records for Kolkata
-- 11 critical features: Temperature, Dew Point, Humidity, Pressure, Wind Speed, etc.
+- 11 critical features: Temperature, Dew Point, Humidity, Pressure etc.
 - Automatic removal of noisy/empty columns (Wind Chill)
 - Missing value imputation using forward-fill strategy
 
