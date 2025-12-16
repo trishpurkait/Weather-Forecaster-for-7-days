@@ -4,7 +4,7 @@ A deep learning system that predicts the daily temperature sequence for the next
 
 ## 📌 Project Overview
 
-This project implements an intelligent weather forecasting engine designed specifically for the tropical climate of Kolkata, India. Using advanced Recurrent Neural Networks (Bi-LSTM) and 5 years of historical data, the system analyzes 14-day weather patterns to generate a precise 7-day temperature forecast, achieving sub-1-degree accuracy.
+This project implements an intelligent weather forecasting engine designed specifically for the tropical climate of Kolkata, India. Using advanced Recurrent Neural Networks (Bi-LSTM) and 5 years of historical data from the [Five Years Weather Data of Kolkata](https://www.kaggle.com/datasets/kafkarps/five-years-weather-data-of-kolkata) dataset, the system analyzes 14-day weather patterns to generate a precise 7-day temperature forecast, achieving sub-1-degree accuracy.
 
 ## ✨ Features
 
@@ -12,7 +12,7 @@ This project implements an intelligent weather forecasting engine designed speci
   * **Bi-Directional Context:** Utilizes Bidirectional LSTMs to understand weather patterns from both past and future contexts.
   * **Robust Outlier Handling:** Implements Huber Loss to maintain stability during sudden storms or heatwaves.
   * **Seasonality Engineering:** Uses cyclical sine/cosine features to mathematically model Winter, Summer, and Monsoon cycles.
-  * **Data Cleaning Pipeline:** Removal of noisy features (Wind Speed/Chill) and missing value imputation.
+  * **Data Cleaning Pipeline:** Automatic removal of noisy features (Wind Speed/Chill) and missing value imputation.
   * **Visual Feedback:** Plots "Actual vs. Predicted" temperature trends for easy verification.
 
 ## 🎯 How It Works
@@ -160,6 +160,6 @@ Pro Model Max Error:      5.58 °C
 
 ## 🙏 Acknowledgments
 
-  * Visual Crossing Weather API (Data Source)
+  * [Five Years Weather Data of Kolkata](https://www.kaggle.com/datasets/kafkarps/five-years-weather-data-of-kolkata) (Kaggle)
   * TensorFlow/Keras Community
   * Open Source Contributors
